@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LifeLine</title>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-database.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="AdminLTE/plugins/fontawesome-free/css/all.min.css"
+    />
+    <!-- Theme style -->
+    <!-- <link rel="stylesheet" href="AdminLTE/dist/css/adminlte.min.css" /> -->
+    <link rel="stylesheet" href="AdminLTE/dist/css/adminlte.min.css" />
+    <!-- Google Font: Source Sans Pro -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+      <!-- Navbar -->
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#"
+              ><i class="fas fa-bars"></i
+            ></a>
+          </li>
+          <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Home</a>
+          </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+          <!-- SEARCH FORM -->
+          <form class="form-inline ml-3">
+            <div class="input-group input-group-sm">
+              <input
+                class="form-control form-control-navbar"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+          <li class="nav-item d-none d-sm-inline-block">
+            <!-- <a href="#" class="nav-link" id="logout">Logout</a> -->
+            <!-- <button type="button" class="btn btn-block btn-primary">Primary</button> -->
+            <button
+              class="btn btn-block btn-danger btn-sm"
+              id="logout"
+              type="button"
+            >
+              Logout
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <!-- Main Sidebar Container -->
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-link">
+          <span class="brand-text font-weight-light">LifeLine</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Sidebar user panel (optional) -->
+          <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="info" id="text">
+              <h6 class="d-block text-white" id="user-name"></h6>
+            </div>
+          </div>
+
+          <!-- Sidebar Menu -->
+          <nav class="mt-2">
+            <ul
+              class="nav nav-pills nav-sidebar flex-column"
+              data-widget="treeview"
+              role="menu"
+              data-accordion="false"
+            >
+              <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+              <li class="nav-item has-treeview menu-open">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>
+                    Dashboard
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item" id="adNrs">
+                    <a href="addnurse.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Add Nurses</p>
+                    </a>
+                  </li>
+                  <li class="nav-item" id="rqtBld">
+                    <a href="requestbld.html" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Request</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+          <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+      </aside>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0 text-dark" id="hospital-name">
+                  HospitalName Page
+                </h1>
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                </ol>
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+          <div id="bbs">
+          <h4 class="text-bold text-dark mt-4" >Blood Bank Statistics</h4>
+
+          <div class="card px-md col-3">
+          <div class="card-body">
+            Blood Group:
+            <select name="bld-grp" id="blood-group">
+              <option value="O">O</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="AB">AB</option>
+            </select>
+            <li class="nav-item d-none d-sm-inline-block">
+              <!-- <a href="#" class="nav-link" id="search-blood">Search</a> -->
+              <button class="btn btn-block btn-primary btn-xs" id="search-blood" type="button">
+                Search
+              </button>
+            </li>
+          </div>
+          </div>
+          </div>
+          
+
+          <div class="row" id="bt">
+            <h5 class="text-bold text-dark mt-4 col-md-4 col-sm-9 col-12">
+              Blood Type
+            </h5>
+            <h5
+              class="text-bold text-dark mt-4 col-md-4 col-sm-9 col-12"
+              id="title-blood"
+            ></h5>
+          </div>
+
+          <div class="container-fluid" id="blddets">
+            <div class="row mx-md-n2">
+              <div class="col-md-4 col-sm-6 col-12">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"
+                    ><i class="far fa-circle"></i
+                  ></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Needed</span>
+                    <span class="info-box-number" id="need">0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-6 col-12">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"
+                    ><i class="far fa-bars"></i
+                  ></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Available</span>
+                    <span class="info-box-number" id="avail">0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-6 col-12">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"
+                    ><i class="far fa-envelope"></i
+                  ></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Used</span>
+                    <span class="info-box-number" id="used">0</span>
+                  </div>
+                </div>
+              </div>
+
+            
+
+              
+
+          
+          </div>
+        </div>
+
+        <div class="container-fluid" id="donChart">
+            <div class="row mx-md-n2">
+              <div class="col-6">
+                <!-- DONUT CHART -->
+                <div class="card card-danger">
+                  <div class="card-header">
+                    <h3 class="card-title">Blood Chart</h3>
+            
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <div class="col-6">
+                <div class="card px-md">
+                  <div class="card-header">
+                    <h3 class="card-title">Nurses</h3>
+                  </div>
+            
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <table id="nurseTable" class="table table-bordered table-striped">
+                    </table>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+        </div>
+
+        <div class="col-12" id="donateRqt" >
+          <div class="card px-md">
+            <div class="card-header">
+              <h3 class="card-title">Donation Requests</h3>
+            </div>
+        
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="requestTable" class="table table-bordered table-striped">
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="takeBlood">
+          <div class="col-12">
+            <div class="form-group">
+              <label>Blood Group</label>
+              <select class="form-control select2bs4" style="width: 100%;" id="reqbldGrp">
+                <!-- <option selected="selected">A</option> -->
+                <option>A</option>
+                <option>B</option>
+                <option>AB</option>
+                <option>O</option>
+            
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" class="form-control" placeholder="Enter quantity here..." id="withQuan">
+            </div>
+
+            <div class="form-group">
+              <button type="button" class="btn btn-block btn-danger" id="withdrawBlood">Withdraw Blood</button>
+            </div>
+            
+          </div>
+        </div>
+
+        <div class="card col-12" id="administratorView">
+          <div class="form-group">
+            <label>Hospital Name</label>
+            <input type="text" class="form-control" placeholder="Enter name" id="hosName" />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Hospital Email</label>
+            <input type="email" class="form-control" id="hosEmail1" placeholder="Enter email" />
+          </div>
+          
+          <div class="form-group">
+            <label>Hospital Phone Number</label>
+          
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+              </div>
+              <input type="text" class="form-control" id="hosphnNum"
+                data-inputmask="'mask': ['999-999-9999 [x99999]', '+099 99 99 9999[9]-9999']" data-mask />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Hospital Location</label>
+            <select class="form-control select2bs4" style="width: 100%;" id="hospitalLocation">
+              <!-- <option selected="selected">A</option> -->
+              <option>Accra</option>
+              <option>Tamale</option>
+              <option>Kumasi</option>
+              <option>Tema</option>
+            
+            </select>
+            <!-- <input type="text" class="form-control" placeholder="Enter location.." id="hospitalLocation" /> -->
+          </div>
+          <div class="form-group">
+            <label>Hospital Latitude</label>
+            <input type="number" class="form-control" placeholder="Enter latitude.." id="hospitalLat" />
+          </div>
+          <div class="form-group">
+            <label>Hospital Longitude</label>
+            <input type="number" class="form-control" placeholder="Enter longitude.." id="hospitalLong" />
+          </div>
+
+          <div class="form-group">
+            <label>Administator Name</label>
+            <input type="text" class="form-control" placeholder="Enter name" id="adminName" />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Administator Email</label>
+            <input type="email" class="form-control" id="adminEmail1" placeholder="Enter email" />
+          </div>
+          
+          <div class="form-group">
+            <label>Administator Phone Number</label>
+          
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+              </div>
+              <input type="text" class="form-control" id="adminphnNum"
+                data-inputmask="'mask': ['999-999-9999 [x99999]', '+099 99 99 9999[9]-9999']" data-mask />
+            </div>
+          </div>
+          <!-- <div class="form-group"> -->
+            <button type="button" class="btn btn-block btn-danger" id="addHospital">Add New Hospital</button>
+          <!-- </div> -->
+          
+        </div>
+        <!-- /.content -->
+      </div>
+      
+      <!-- /.content-wrapper -->
+
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+        <div class="p-3">
+          <h5>Title</h5>
+          <p>Sidebar content</p>
+        </div>
+      </aside>
+      <!-- /.control-sidebar -->
+    </div>
+
+    <script></script>
+
+    <!-- jQuery -->
+    <script src="AdminLTE/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="AdminLTE/dist/js/adminlte.min.js"></script>
+
+    <script src="js/index.js"></script>
+    <script src="js/logout.js"></script>
+    <script src="js/firebasePirvate.js"></script>
+    <script src="js/adminDuties.js"></script>
+  
+
+    <!--ChartJS -->
+    <script src="AdminLTE/plugins/chart.js/Chart.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="AdminLTE/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+
+    <script>
+      $(function() {
+        console.log("document ready");
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (!user) {
+            window.location.href = "signin.html";
+            // console.log(user.uid);
+          }
+        });
+
+        nursesData = []
+        requestsData = []
+
+      
+       
+      });
+
+        function reloadTable() {
+            $('#nurseTable').DataTable({
+              "paging": true,
+              "lengthChange": true,
+              "searching": false,
+              "ordering": true,
+              "info": true,
+              "autoWidth": false,
+              data: nursesData,
+              columns: [
+                { title: "Name" },
+                { title: "Email" },
+                { title: "Phone Number" }
+              ]
+            });
+          }
+
+          function reloadReqTable(){
+            $("#requestTable").DataTable({
+              "paging": true,
+              "lengthChange": true,
+              "searching": false,
+              "ordering": true,
+              "info": true,
+              "autoWidth": false,
+              data: requestsData,
+              columns: [{ title: "ID" }, { title: "Request Date" }, { title: "Request Time" }, { title: "Blood Group" }, { title: "Emergency Contact" }, { title: "Donate Message" }]
+            });
+          }
+
+    </script>
+  </body>
+</html>
