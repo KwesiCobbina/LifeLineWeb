@@ -122,7 +122,7 @@ var firebaseConfig = {
   storageBucket: "lifeline-f29d3.appspot.com",
   messagingSenderId: "500356708530",
   appId: "1:500356708530:web:fad654e6035644309b31ab",
-  measurementId: "G-YBMF7RDHEG"
+  measurementId: "G-YBMF7RDHEG",
 };
 
 var firebaseConfig2 = {
@@ -133,18 +133,18 @@ var firebaseConfig2 = {
   storageBucket: "lifeline-f29d3.appspot.com",
   messagingSenderId: "500356708530",
   appId: "1:500356708530:web:fad654e6035644309b31ab",
-  measurementId: "G-YBMF7RDHEG"
+  measurementId: "G-YBMF7RDHEG",
 };
 var tag;
 var hosName;
 var nurseID;
 
-$(function() {
+$(function () {
   firebase.initializeApp(firebaseConfig);
   firebase.auth.Auth.Persistence.SESSION;
   var secApp = firebase.initializeApp(firebaseConfig2, "Secondary");
 
-  firebase.auth().onAuthStateChanged(function(user) {
+  firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
       var uid = user.uid;
@@ -153,45 +153,41 @@ $(function() {
         .database()
         .ref("/LIFELINE/DashboardUsers/" + uid)
         .once("value")
-        .then(function(snapshot) {
+        .then(function (snapshot) {
           if (snapshot.exists()) {
-            // var userData = snapshot.val();
-            // var useremail = snapshot.child("email").val();
             var name = snapshot.child("name").val();
             var tag1 = snapshot.child("hospitalTag").val();
             hosName = snapshot.child("hospitalName").val();
             $("#user-name").text(name);
-            // console.log(name);
-            // console.log($("#user-name"));
 
             tag = tag1;
             return tag1;
           }
         })
-        .then(function(tag1) {
-          $("#addNurse").click(function() {
+        // Create nurse
+        .then(function (tag1) {
+          $("#addNurse").click(function () {
             secApp
               .auth()
               .createUserWithEmailAndPassword(
                 $("#exampleInputEmail1").val(),
                 "passwordNurse"
               )
-              .then(function(user1) {
+              .then(function (user1) {
                 nurseID = user1.user.uid;
-
+                // save nurse in under hospital
                 firebase
                   .database()
                   .ref("LIFELINE/Hospitals/" + tag1 + "/Nurses/" + nurseID)
                   .set({
                     name: $("#nurseName").val(),
                     email: $("#exampleInputEmail1").val(),
-                    phoneNumber: $("#phnNum").val()
+                    phoneNumber: $("#phnNum").val(),
                   });
-
+                // save nurse under dashboard users
                 firebase
                   .database()
                   .ref("LIFELINE/DashboardUsers/" + nurseID)
-                  // .ref("LIFELINE/HospitalStaff/" + tag + "/" + nurseID)
                   .set({
                     name: $("#nurseName").val(),
                     email: $("#exampleInputEmail1").val(),
@@ -199,40 +195,36 @@ $(function() {
                     hospitalTag: tag,
                     hospitalName: hosName,
                     isAdmin: false,
-                    isSuperAdmin: false
+                    isSuperAdmin: false,
                   });
 
-                window.alert(
-                  "you have successfully added nurse " +
-                    $("#nurseName").val() +
-                    nurseID
-                );
+                window.alert("you have successfully added nurse " + nurseID);
                 secApp
                   .auth()
                   .signOut()
                   .then(
-                    function() {
+                    function () {
                       // Sign-out successful.
                       console.log("you're out");
                     },
-                    function(error) {
+                    function (error) {
                       // An error happened.
                       // console.log(error);
                       window.alert(error);
                     }
                   );
-
+                // send password reset message
                 firebase
                   .auth()
                   .sendPasswordResetEmail($("#exampleInputEmail1").val())
-                  .then(function() {
+                  .then(function () {
                     console.log("Successfully sent reset link");
                   })
-                  .catch(function(error) {
+                  .catch(function (error) {
                     console.log(error);
                   });
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
@@ -241,7 +233,7 @@ $(function() {
           });
         })
 
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     } else {

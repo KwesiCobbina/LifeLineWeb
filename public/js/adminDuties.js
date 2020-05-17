@@ -17,7 +17,7 @@ var firebaseConfig3 = {
   storageBucket: "lifeline-f29d3.appspot.com",
   messagingSenderId: "500356708530",
   appId: "1:500356708530:web:fad654e6035644309b31ab",
-  measurementId: "G-YBMF7RDHEG"
+  measurementId: "G-YBMF7RDHEG",
 };
 
 var x = document.getElementById("demo");
@@ -30,11 +30,11 @@ function showPosition(position) {
   hospitalLongitude = position.coords.longitude;
 }
 
-$(function() {
+$(function () {
   if ("geolocation" in navigator) {
     //check geolocation available
     //try to get user current location using getCurrentPosition() method
-    navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(function (position) {
       // $("#result").html(
       //   "Found your location <br />Lat : " +
       //     position.coords.latitude +
@@ -49,18 +49,24 @@ $(function() {
   }
   var secApp = firebase.initializeApp(firebaseConfig3, "Secondary");
 
-  $("#addHospital").click(function() {
+  $("#addHospital").click(function () {
     var adminEmail = $("#adminEmail1").val();
     var password = "adminPassword";
     var hospitalName = $("#hosName").val();
     var hospitalEmail = $("#hosEmail1").val();
     var hospitalPhnNumber = $("#hosphnNum").val();
+    var bloodBank = [
+      { A: { haveQuantity: 0, need: 0, needQuantity: 0, used: 0 } },
+      { B: { haveQuantity: 0, need: 0, needQuantity: 0, used: 0 } },
+      { AB: { haveQuantity: 0, need: 0, needQuantity: 0, used: 0 } },
+      { O: { haveQuantity: 0, need: 0, needQuantity: 0, used: 0 } },
+    ];
     var hospitalLocation = $("#hospitalLocation").val();
     var isAdmin = true;
     var isSuperAdmin = false;
     if ($("#hospitalLat").val() != "" && $("#hospitalLong").val() != "") {
-      var hospitalLat = $("#hospitalLat").val();
-      var hospitalLong = $("#hospitalLong").val();
+      var hospitalLat = Number($("#hospitalLat").val());
+      var hospitalLong = Number($("#hospitalLong").val());
     } else {
       var hospitalLat = hospitalLatitude;
       var hospitalLong = hospitalLongitude;
@@ -73,12 +79,12 @@ $(function() {
       secApp
         .auth()
         .createUserWithEmailAndPassword($("#adminEmail1").val(), "adminPass")
-        .then(function(adminUser) {
+        .then(function (adminUser) {
           adminID = adminUser.user.uid;
           // console.log(adminID);
           return adminID;
         })
-        .then(function(adminID) {
+        .then(function (adminID) {
           // console.log(adminID);
           var hospitalTag = UUID();
           firebase
@@ -89,11 +95,12 @@ $(function() {
               hospitalName: hospitalName,
               lat: hospitalLat,
               long: hospitalLong,
-              phoneNumber: hospitalPhnNumber
+              bloodBank: bloodBank,
+              phoneNumber: hospitalPhnNumber,
             });
           return hospitalTag;
         })
-        .then(function(hospitalTag) {
+        .then(function (hospitalTag) {
           console.log(adminEmail);
           firebase
             .database()
@@ -105,7 +112,18 @@ $(function() {
               isAdmin: isAdmin,
               isSuperAdmin: isSuperAdmin,
               name: adminName,
-              phoneNumber: adminPhnNumber
+              phoneNumber: adminPhnNumber,
+            });
+
+          // send password reset message
+          firebase
+            .auth()
+            .sendPasswordResetEmail($("#adminEmail1").val())
+            .then(function () {
+              console.log("Successfully sent reset link");
+            })
+            .catch(function (error) {
+              console.log(error);
             });
           window.alert(
             "New hospital " +
@@ -118,28 +136,6 @@ $(function() {
     }
   });
 });
-
-// $(document).ready(function() {
-//   firebase.initializeApp(firebaseConfig);
-//   firebase.auth.Auth.Persistence.SESSION;
-//   var secApp = firebase.initializeApp(firebaseConfig3, "Secondary");
-
-//   $(document).on("click", 'div[id^="addHospital"]', function() {
-//     alert("hello");
-//   });
-
-//   $("#addHospital").click(function() {
-//     console.log("zxcvbnn");
-//     // secApp
-//     //   .auth()
-//     //   .createUserWithEmailAndPassword($("#adminEmail1").val(), "adminPass")
-//     //   .then(function(adminUser) {
-//     //     adminID = adminUser.user.uid;
-//     //     console.log(adminID);
-//     //   });
-//   });
-// });
-// $(function() {});
 
 var rand = Math.random;
 
